@@ -28,27 +28,39 @@ add_filter('wp_get_attachment_link', 'oikos_get_attachment_link_filter', 10, 4);
 Inserir função no _functions.php_ e alterar os nomes.
 
 ```php
-add_action('restrict_manage_posts','my_restrict_manage_posts');
-
-		function my_restrict_manage_posts() {
-			global $typenow;
-
-			if ($typenow=='your_custom_post_type'){
-                         $args = array(
-                             'show_option_all' => "Show All Categories",
-                             'taxonomy'        => 'your_custom_taxonomy',
-                             'name'               => 'your_custom_taxonomy'
-
-                         );
-				wp_dropdown_categories($args);
-                        }
-		}
-add_action( 'request', 'my_request' );
-function my_request($request) {
-	if (is_admin() && $GLOBALS['PHP_SELF'] == '/wp-admin/edit.php' && isset($request['post_type']) && $request['post_type']=='your_custom_post_type') {
-		$request['term'] = get_term($request['your_custom_taxonomy'],'your_custom_taxonomy')->name;
-
+function restrict_books_by_genre() {
+		global $typenow;
+		$post_type = 'associacao'; // change HERE
+		$taxonomy = 'estado'; // change HERE
+		if ($typenow == $post_type) {
+			$selected = isset($_GET[$taxonomy]) ? $_GET[$taxonomy] : '';
+			$info_taxonomy = get_taxonomy($taxonomy);
+			wp_dropdown_categories(array(
+				'show_option_all' => __("Show All {$info_taxonomy->label}"),
+				'taxonomy' => $taxonomy,
+				'name' => $taxonomy,
+				'orderby' => 'name',
+				'selected' => $selected,
+				'show_count' => true,
+				'hide_empty' => true,
+			));
+		};
 	}
-	return $request;
-}
+
+	add_action('restrict_manage_posts', 'restrict_books_by_genre');
+
+	function convert_id_to_term_in_query($query) {
+		global $pagenow;
+		$post_type = 'associacao'; // change HERE
+		$taxonomy = 'estado'; // change HERE
+		$q_vars = &$query->query_vars;
+		if ($pagenow == 'edit.php' && isset($q_vars['post_type']) && $q_vars['post_type'] == $post_type && isset($q_vars[$taxonomy]) && is_numeric($q_vars[$taxonomy]) && $q_vars[$taxonomy] != 0) {
+			$term = get_term_by('id', $q_vars[$taxonomy], $taxonomy);
+			$q_vars[$taxonomy] = $term->slug;
+		}
+	}
+
+	add_filter('parse_query', 'convert_id_to_term_in_query');
+
+
 ```
