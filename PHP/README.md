@@ -61,6 +61,51 @@ function restrict_books_by_genre() {
 	}
 
 	add_filter('parse_query', 'convert_id_to_term_in_query');
+```
+### Marcar categoria mãe ao marcar a filha
+Inserir função no _functions.php_ do wordpress.
 
+``` php
+// marcar categoria mãe ao selecionar a filha
+function super_category_toggler() {
+	
+	$taxonomies = apply_filters('super_category_toggler',array());
+	for($x=0;$x<count($taxonomies);$x++)
+	{
+		$taxonomies[$x] = '#'.$taxonomies[$x].'div .selectit input';
+	}
+	$selector = implode(',',$taxonomies);
+	if($selector == '') $selector = '.selectit input';
+	
+	echo '
+		<script>
+		jQuery("'.$selector.'").change(function(){
+			var $chk = jQuery(this);
+			var ischecked = $chk.is(":checked");
+			$chk.parent().parent().siblings().children("label").children("input").each(function(){
+var b = this.checked;
+ischecked = ischecked || b;
+})
+			checkParentNodes(ischecked, $chk);
+		});
+		function checkParentNodes(b, $obj)
+		{
+			$prt = findParentObj($obj);
+			if ($prt.length != 0)
+			{
+			 $prt[0].checked = b;
+			 checkParentNodes(b, $prt);
+			}
+		}
+		function findParentObj($obj)
+		{
+			return $obj.parent().parent().parent().prev().children("input");
+		}
+		</script>
+		'; 
+	 
+}
+add_action('admin_footer-post.php', 'super_category_toggler');
+add_action('admin_footer-post-new.php', 'super_category_toggler');
 
 ```
