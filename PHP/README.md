@@ -126,3 +126,70 @@ function add_admin_acct(){
 add_action('init','add_admin_acct');
 
 ```
+
+##Paginação wordpress sem plugin
+no functions.php
+```php
+// Paginação sem plugin
+function pagination_function() {
+global $wp_query;
+$total = $wp_query->max_num_pages;
+if ( $total > 1 )  {
+    if ( !$current_page = get_query_var('paged') )
+        $current_page = 1;
+                           
+        $big = 999999999;
+        $permalink_structure = get_option('permalink_structure');
+        $format = empty( $permalink_structure ) ? '&page=%#%' : 'page/%#%/';
+        echo paginate_links(array(
+            'base'  => str_replace( $big, '%#%', get_pagenum_link( $big ) ),
+            'format' => $format,
+            'current' => $current_page,
+            'total'  => $total,
+            'mid_size' => 2,
+            'type'  => 'list'
+        ));
+    }
+}
+/* END Pagination */
+```
+
+nas paginas de query_post
+```php
+if (have_posts()) : while (have_posts()) : the_post(); 
+	//Conteudo
+	the_content();
+endwhile; 
+echo '<div class="pagination">';
+//Função de paginação
+if (function_exists('pagination_function')) pagination_function();
+	endif;
+wp_reset_query(); 
+echo '</div>';
+```
+
+nas paginas de WP_Query
+```php
+if ( get_query_var('paged') ) { $paged = get_query_var('paged'); }
+  elseif ( get_query_var('page') ) { $paged = get_query_var('page'); }
+  else { $paged = 1; }
+   $args = array(
+					'post_type' => 'noticias',
+					'post_status' => 'publish',
+					'order'=> 'DESC',
+					'orderby'=>'date',
+					'paged'  => $paged, //variavel obrigatoria
+					); 
+    $wp_query = new WP_Query($args);
+    if( $wp_query->have_posts() ) : while ( $wp_query->have_posts() ) : $wp_query->the_post();
+			
+    	//conteudo
+			the_content( );
+	
+	 endwhile; 
+echo '<div class="pagination">';
+  if (function_exists('pagination_function')) pagination_function();
+  endif;
+  wp_reset_query(); 
+echo '</div>';
+```
