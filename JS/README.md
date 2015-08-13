@@ -57,3 +57,91 @@ $(document).ready(function(){
         });
     });
 ```
+### Hide scroll down, show scroll up
+Função js para ocultar quando o scroll for para baixo e mostrar quando o scroll subir
+
+Para usar deve-se trocar o elemento _header_
+``` js
+var didScroll;
+var lastScrollTop = 0;
+var delta = 5;
+var navbarHeight = $('header').outerHeight();
+
+$(window).scroll(function(event){
+    didScroll = true;
+});
+
+setInterval(function() {
+    if (didScroll) {
+        hasScrolled();
+        didScroll = false;
+    }
+}, 250);
+
+function hasScrolled() {
+    var st = $(this).scrollTop();
+    
+    // Make sure they scroll more than delta
+    if(Math.abs(lastScrollTop - st) <= delta)
+        return;
+    
+    // If they scrolled down and are past the navbar, add class .nav-up.
+    // This is necessary so you never see what is "behind" the navbar.
+    if (st > lastScrollTop && st > navbarHeight){
+        // Scroll Down
+        $('header').fadeOut(300);
+    } else {
+        // Scroll Up
+        if(st + $(window).height() < $(document).height()) {
+            $('header').fadeIn(300);
+        }
+    }
+    
+    lastScrollTop = st;
+}
+```
+
+### POP UP de compartilhamento
+**AVISO** - Nunca coloque esta função dentro do $(document).ready <br>
+script usado para o pop up de compartilhamento <br>
+no HTML
+``` html
+<a href="#" taget="_blank" onclick="return abrirPopup('https://www.facebook.com/sharer/sharer.php?u=<?php the_permalink() ?>', 700, 400);">Facebook</a>
+
+<a href="#" taget="_blank" onclick="return abrirPopup('https://twitter.com/intent/tweet?url=<?php the_permalink() ?>', 700, 400);">Twitter</a>
+
+<a href="#" taget="_blank" onclick="return abrirPopup('https://plus.google.com/share?url=<?php the_permalink() ?>', 700, 400);">Google+</a>
+```
+
+no JS
+``` js
+//function para abrir o pop up de compartilhar
+  function abrirPopup(url,w,h) {
+  var newW = w + 100;
+  var newH = h + 100;
+  var left = (screen.width-newW)/2;
+  var top = (screen.height-newH)/2;
+  var newwindow = window.open(url, 'name', 'width='+newW+',height='+newH+',left='+left+',top='+top);
+  newwindow.resizeTo(newW, newH);
+  //posiciona o popup no centro da tela
+  newwindow.moveTo(left, top);
+  newwindow.focus();
+  return false;
+}
+```
+
+### Scroll page
+Função simples para localizar se houve scroll na pagina
+``` js
+    $(window).scroll(function(){
+       valor_scroll = $(document).scrollTop();
+       // console.log(valor_scroll);
+       if(valor_scroll >= 30){
+       	$('header').addClass('header-ativo');
+       }
+       else{
+					$('header').removeClass('header-ativo');
+       }
+    });
+```
+
