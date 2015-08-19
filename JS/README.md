@@ -145,6 +145,19 @@ Função simples para localizar se houve scroll na pagina
     });
 ```
 
+### Click animation button
+``` js
+animationType = 'var1 var2';
+animationEnd = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
+
+$('.btn').on('click', function() {
+	$('input').addClass(animationType).one(animationEnd, function(){
+		$(this).removeClass(animationType);
+	});
+});
+```
+
+
 
 <!-- teste -->
 
