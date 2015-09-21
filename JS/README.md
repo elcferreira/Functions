@@ -156,3 +156,85 @@ $('.btn').on('click', function() {
 	});
 });
 ```
+
+### scrol disabled init
+função para scroll do banner inicial
+``` js
+// Function para Disabled scroll
+// left: 37, up: 38, right: 39, down: 40,
+// spacebar: 32, pageup: 33, pagedown: 34, end: 35, home: 36
+var keys = [37, 38, 39, 40];
+
+function preventDefault(e) {
+  e = e || window.event;
+  if (e.preventDefault)
+      e.preventDefault();
+  e.returnValue = false;  
+}
+
+function keydown(e) {
+  for (var i = keys.length; i--;) {
+    if (e.keyCode === keys[i]) {
+      preventDefault(e);
+      return;
+    }
+  }
+}
+
+function wheel(e) {
+  preventDefault(e);
+}
+
+function disable_scroll() {
+  if (window.addEventListener) {
+      window.addEventListener('DOMMouseScroll', wheel, false);
+  }
+  window.onmousewheel = document.onmousewheel = wheel;
+  document.onkeydown = keydown;
+}
+
+function enable_scroll() {
+    if (window.removeEventListener) {
+        window.removeEventListener('DOMMouseScroll', wheel, false);
+    }
+    window.onmousewheel = document.onmousewheel = document.onkeydown = null;  
+}
+
+// banner scroll
+
+	var lastScrollTop = 0;
+	bannerScroll = $(document.getElementById('banner-home'));
+	bannerScrollHeight = bannerScroll.height();
+	flag = true;
+	$(window).scroll(function(event){
+	   var st = $(this).scrollTop();
+	   if (st > lastScrollTop){
+	    console.log('down');
+
+			if ( st == 0 || st <= bannerScrollHeight ) {
+				if (flag) {
+	        disable_scroll();
+			    $('html, body').animate({
+			        scrollTop: $("#solucoes").offset().top + 20
+			    }, 400, function(){
+			    	enable_scroll();
+			    });
+			    flag = false;
+			    // if (!flag) {
+			    // 	return false;
+			    // }
+			    
+				}
+			}
+
+	   } else {
+	      console.log('up');
+	      if (!flag) {
+	      	flag = true;
+	      }
+	   }
+	   lastScrollTop = st;
+	});
+```
+
+
