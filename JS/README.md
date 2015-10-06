@@ -237,4 +237,24 @@ function enable_scroll() {
 	});
 ```
 
+## Scroll opacity
+``` js
+
+	var fadeStart=100, // Inicio do fade
+	    fadeUntil=600, // final do fade
+	    fading = $(document.querySelector('.header--bg'));
+  
+  $(window).on('scroll', function(){
+    var offset = $(document).scrollTop(),
+      opacity=1; //atribui o fade
+    if( offset<=fadeStart ){
+      opacity=0;
+    } else if ( offset<=fadeUntil ){
+      // opacity=1-offset/fadeUntil;   Inverte
+      opacity=offset/fadeUntil;
+    }
+    fading.css('opacity',opacity);
+  });
+```
+
 
