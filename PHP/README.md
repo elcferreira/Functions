@@ -219,3 +219,29 @@ echo '</div>';
 
 <?php endif; ?>
 ```
+
+
+## Coletar ID da imagem by URL
+```php
+// No functions
+function get_image_id($image_url) {
+	global $wpdb;
+	$attachment = $wpdb->get_col($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE guid='%s';", $image_url )); 
+        return $attachment[0]; 
+}
+
+
+// No tema
+// Defina a Url
+$image_url = 'http://yoursite.com/wp-content/uploads/2011/02/14/image_name.jpg';
+ 
+// Win ID
+$image_id = pippin_get_image_id($image_url);
+ 
+// Colete os tamanhos
+$image_thumb = wp_get_attachment_image_src($image_id, 'thumbnail');
+ 
+// Mostre a imagem
+echo $image_thumb[0];
+
+```
