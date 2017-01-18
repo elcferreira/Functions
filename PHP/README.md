@@ -245,3 +245,10 @@ $image_thumb = wp_get_attachment_image_src($image_id, 'thumbnail');
 echo $image_thumb[0];
 
 ```
+
+## Rewrite
+Técnica usada para pagescroll, onde não redireciona os paths posteriores
+``` php
+// Ignora coisas 
+add_rewrite_rule('^silhouette-soft\/(.*)\/?', "index.php?page_id=5", 'top' );
+```	
